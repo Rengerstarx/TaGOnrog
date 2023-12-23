@@ -5,12 +5,12 @@ import com.google.firebase.database.FirebaseDatabase
 
 class ParceUsers {
 
-    fun parsUser(dataSnapshot: DataSnapshot): User {
+    fun parsUser(dataSnapshot: DataSnapshot): Users {
         var visit = mutableListOf<PlaceData>()
         dataSnapshot.child("Place").children.forEach {
             visit.add(PlaceData(it.key.toString().toInt(), it.child("Count").value.toString().toInt(), it.child("Data").value.toString()))
         }
-        val user = User(
+        val user = Users(
             mail = dataSnapshot.child("Mail").value.toString(),
             name = dataSnapshot.child("Name").value.toString(),
             surname = dataSnapshot.child("Surname").value.toString(),
