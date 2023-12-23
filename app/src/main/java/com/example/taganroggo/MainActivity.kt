@@ -9,20 +9,14 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
-<<<<<<< HEAD
 import android.os.CountDownTimer
-=======
->>>>>>> 42ab6b3488278ab09da2d8d220baa7743dadf728
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-<<<<<<< HEAD
 import android.view.KeyEvent
 import android.view.View
 import androidx.activity.viewModels
-=======
->>>>>>> 42ab6b3488278ab09da2d8d220baa7743dadf728
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -47,12 +41,9 @@ class MainActivity : AppCompatActivity() {
     private var lastAccelerationValues = FloatArray(3)
     private var shakeThreshold = 30.5f
     private var minimum_needed_distance = 10.555733555811401E-4
-<<<<<<< HEAD
-    private var timer : CountDownTimer? = null
+    private var timer: CountDownTimer? = null
     private var frg: Map? = null
 
-=======
->>>>>>> 42ab6b3488278ab09da2d8d220baa7743dadf728
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapKitFactory.setApiKey("187c5f44-6646-457f-b619-eca2dca3cdbe")
@@ -61,24 +52,23 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        registerPermissionListener()
-        checkPermissions()
-
 //https://github.com/akshay2211/BubbleTabBar
         bubble = binding.bubbleTabBar
         replaceFragment(PlaceList())
         bubble.addBubbleListener(object : OnBubbleClickListener {
             override fun onBubbleClick(id: Int) {
-                when(id){
+                when (id) {
                     R.id.List -> {
                         is_frag = 1
                         replaceFragment(PlaceList())
                     }
+
                     R.id.Map -> {
                         frg = Map()
                         replaceFragment(Map())
                         is_frag = 2
                     }
+
                     R.id.Profile -> {
                         is_frag = 3
                         replaceFragment(Profile())
@@ -108,7 +98,13 @@ class MainActivity : AppCompatActivity() {
 
         override fun onSensorChanged(event: SensorEvent) {
             if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
-                System.arraycopy(accelerationValues, 0, lastAccelerationValues, 0, accelerationValues.size)
+                System.arraycopy(
+                    accelerationValues,
+                    0,
+                    lastAccelerationValues,
+                    0,
+                    accelerationValues.size
+                )
                 System.arraycopy(event.values, 0, accelerationValues, 0, accelerationValues.size)
 
                 val deltaX = accelerationValues[0] - lastAccelerationValues[0]
@@ -123,7 +119,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    fun replaceFragment(fragment: Fragment){
+
+    fun replaceFragment(fragment: Fragment) {
         if (is_frag != 2) {
             Log.i("Dibug1", "fragment")
             val fragmentManager = supportFragmentManager
@@ -132,11 +129,13 @@ class MainActivity : AppCompatActivity() {
             fragmentTransaction.commit()
         }
     }
+
     private fun handleShake() {
 // Код для обработки тряски телефона
 
     }
-    private fun isOnPlace(){
+
+    private fun isOnPlace() {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this)
         val task = fusedLocationProviderClient.lastLocation
@@ -150,30 +149,30 @@ class MainActivity : AppCompatActivity() {
         ) {
             return
         }
-        else{
+        else {
         }
         task.addOnSuccessListener {
-            if (it!=null){
+            if (it != null) {
                 val latitude = it.latitude
                 val longitude = it.longitude
                 val firebase = FirebaseAPI()
                 firebase.takeAll("Places") {
                     val places = ParserPLace().parsPalces(it)
-                    var minimum_distance:Double = 100.0
-                    var title:String = ""
+                    var minimum_distance: Double = 100.0
+                    var title: String = ""
                     for (item in places) {
-                        val distance = calculateDistance(latitude, longitude, item.latitude, item.longitude)
-                        if (minimum_distance>distance){
+                        val distance =
+                            calculateDistance(latitude, longitude, item.latitude, item.longitude)
+                        if (minimum_distance > distance) {
                             minimum_distance = distance
                             title = item.name
                             liveData.data.value = item
                         }
                     }
                     Log.i("info dist", "${title} - ${minimum_distance}")
-<<<<<<< HEAD
                     Log.i("info dist", "${is_frag}")
                     Log.i("info dist", "${liveData.flag_view.value}")
-                    if (minimum_needed_distance >= minimum_distance && liveData.flag_view.value != true && is_frag != 2){
+                    if (minimum_needed_distance >= minimum_distance && liveData.flag_view.value != true && is_frag != 2) {
                         Log.i("info dist", "now fragment - ${is_frag}")
                         Log.i("info dist", "${liveData.data.value!!.time}")
                         liveData.flag_view.value = true
@@ -181,42 +180,20 @@ class MainActivity : AppCompatActivity() {
                             replaceFragment(Map())
                             is_frag = 2
                         }
-=======
-                    if (minimum_needed_distance >= minimum_distance){
-                       replaceFragment(Map())
->>>>>>> 42ab6b3488278ab09da2d8d220baa7743dadf728
+                        }
                     }
                 }
             }
+
+            return
         }
-
-        return
-    }
-
-
-
-    fun checkPermissions() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && ContextCompat.checkSelfPermission(this , Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            pLauncher.launch(arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ))
-        }
-    }
-    private fun registerPermissionListener(){
-        pLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ){
-
-        }
-    }
-    fun calculateDistance(x1: Double, y1: Double, x2: Double, y2: Double): Double {
-        val deltaX = x2 - x1
-        val deltaY = y2 - y1
+        fun calculateDistance(x1: Double, y1: Double, x2: Double, y2: Double): Double {
+            val deltaX = x2 - x1
+            val deltaY = y2 - y1
 
 // Используем теорему Пифагора для вычисления расстояния
-        val distance = sqrt(deltaX.pow(2) + deltaY.pow(2))
-        return distance
-    }
+            val distance = sqrt(deltaX.pow(2) + deltaY.pow(2))
+            return distance
+        }
+
 }

@@ -77,6 +77,7 @@ class Map() : Fragment() {
     private var placemarkList: ArrayList<PlacemarkMapObject> = arrayListOf()
     var dialogView: View? = null
     var curentLocation: Location? = null
+    lateinit var places : MutableList<Place>
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     //lateinit var pinsCollection : MapObjectCollection
 
@@ -93,6 +94,13 @@ class Map() : Fragment() {
             dialog.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
             dialog.getWindow()?.getAttributes()?.windowAnimations = R.style.DialogAnimation;
             dialog.getWindow()?.setGravity(Gravity.BOTTOM);
+            lateinit var obj : Place
+            for (i in places){
+                Log.i("Dibug1", "${point.latitude} - ${i.latitude} ^ ${point.longitude} - ${i.longitude}")
+                if (point.latitude == i.latitude && point.longitude == i.longitude){
+                    val obj = i
+                }
+            }
 
             val image = dialogView?.findViewById<ViewPager2>(R.id.image_list_info)
             val time = dialogView?.findViewById<TextView>(R.id.textTime)
@@ -102,15 +110,15 @@ class Map() : Fragment() {
             val info = dialogView?.findViewById<TextView>(R.id.info_place)
 
             val adapterPager = PlacePhotoAdapter()
-            adapterPager.addImage(liveData.data.value!!.photo)
+            adapterPager.addImage(obj.photo)
             image!!.adapter = adapterPager
-            time!!.text = liveData.data.value!!.time
-            addr!!.text = liveData.data.value!!.adress
-            name!!.text = liveData.data.value!!.name
+            time!!.text = obj.time
+            addr!!.text = obj.adress
+            name!!.text = obj.name
 
             var allTags = 0
             layoutTags!!.removeAllViews()
-            for (str in liveData.data.value!!.tags) {
+            for (str in obj.tags) {
                 val cardView = CardView(requireContext())
                 val cardParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -138,7 +146,7 @@ class Map() : Fragment() {
 
                 layoutTags.addView(cardView)
                 if (allTags > 3) {
-                    textView.text = "+${liveData.data.value!!.tags.size - 3}"
+                    textView.text = "+${obj.tags.size - 3}"
                     break
                 }
             }
@@ -192,19 +200,21 @@ class Map() : Fragment() {
         MapKitFactory.getInstance().onStart()
         mapView.onStart()
 
-        val points = listOf(
-            Point(47.210041, 38.937439),
-            Point(47.213060, 38.938122),
-            Point(47.212494, 38.925883),
-            Point(47.206874, 38.931242),
-        )
-
-        for (i in points) {
-            val placemarkMapObject =
-                mapView.map.mapObjects.addPlacemark(i, ImageProvider.fromResource(requireContext(), R.drawable.icon_ex)) // Добавляем метку со значком
-            placemarkMapObject.addTapListener(mapObjectTapListener)
-            placemarkList.add(placemarkMapObject)
+        val firebase = FirebaseAPI()
+        firebase.takeAll("Places") {
+            places = ParserPLace().parsPalces(it)
+            for (i in places) {
+                val placemarkMapObject =
+                    mapView.map.mapObjects.addPlacemark(
+                        Point(i.latitude, i.longitude),
+                        ImageProvider.fromResource(requireContext(), R.drawable.icon_for_map)
+                    ) // Добавляем метку со значком
+                placemarkMapObject.addTapListener(mapObjectTapListener)
+                placemarkList.add(placemarkMapObject)
+            }
         }
+
+
 
         location = mapKit.createUserLocationLayer(mapView.mapWindow)
         location.isVisible = true
