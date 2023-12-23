@@ -1,0 +1,114 @@
+{
+  "project_info": {
+    "project_number": "316572324911",
+    "firebase_url": "https://taganrog-75b99-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "taganrog-75b99",
+    "storage_bucket": "taganrog-75b99.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316572324911:android:f285958f73cd917c54e2da",
+        "android_client_info": {
+          "package_name": "com.example.taganroggo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "316572324911-0qo277lg3fpgv1oedam85848p0f60pod.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.taganroggo",
+            "certificate_hash": "647c4c925c0d834f608af00ed0211d9f1d774af3"
+          }
+        },
+        {
+          "client_id": "316572324911-hc0ccvc56d4ff2lfkuojh3ueqv4o0ti1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyg7nIO4KWcVc4yL_6dDx2ZzEZjB54mLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "316572324911-hc0ccvc56d4ff2lfkuojh3ueqv4o0ti1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316572324911:android:daac8838e022411054e2da",
+        "android_client_info": {
+          "package_name": "com.example.tagonrog"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "316572324911-hc0ccvc56d4ff2lfkuojh3ueqv4o0ti1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyg7nIO4KWcVc4yL_6dDx2ZzEZjB54mLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "316572324911-hc0ccvc56d4ff2lfkuojh3ueqv4o0ti1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316572324911:android:9b17b637a95197b854e2da",
+        "android_client_info": {
+          "package_name": "com.example.tagonrog2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "316572324911-8ilc9b7ko17i3ip1nvli48ef3qk1ca9p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tagonrog2",
+            "certificate_hash": "647c4c925c0d834f608af00ed0211d9f1d774af3"
+          }
+        },
+        {
+          "client_id": "316572324911-hc0ccvc56d4ff2lfkuojh3ueqv4o0ti1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyg7nIO4KWcVc4yL_6dDx2ZzEZjB54mLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "316572324911-hc0ccvc56d4ff2lfkuojh3ueqv4o0ti1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
