@@ -1,14 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Profile">
+    tools:context="com.example.tagonrog.UI.Profile">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent" >
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="237dp"
+            android:foreground="@drawable/background_profile"
+            android:src="@drawable/background_profile" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="513dp"
+            android:layout_gravity="bottom"
+            android:backgroundTint="#D8ECE0"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="22dp">
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/TitleBlock"
+            android:layout_width="391dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="240dp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="20dp">
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="379dp"
+            android:layout_gravity="bottom" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="150dp"
+            android:background="@drawable/ic_profile"
+            android:paddingStart="30dp"
+            app:cardCornerRadius="100dp" />
+
+    </androidx.cardview.widget.CardView>
 
 </FrameLayout>
