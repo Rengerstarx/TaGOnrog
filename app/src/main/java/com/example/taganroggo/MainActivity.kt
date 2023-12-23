@@ -9,15 +9,10 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
-<<<<<<< HEAD
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-=======
-import android.view.KeyEvent
-import android.view.View
->>>>>>> origin/main
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -41,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     private var accelerationValues = FloatArray(3)
     private var lastAccelerationValues = FloatArray(3)
     private var shakeThreshold = 30.5f
-    private var minimum_needed_distance = 4.555733555811401E-4
+    private var minimum_needed_distance = 10.555733555811401E-4
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapKitFactory.setApiKey("187c5f44-6646-457f-b619-eca2dca3cdbe")
@@ -154,11 +149,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     Log.i("info dist", "${title} - ${minimum_distance}")
                     if (minimum_needed_distance >= minimum_distance){
-                        val fragmentManager = supportFragmentManager
-                        val fragmentTransaction = fragmentManager.beginTransaction()
-                        fragmentTransaction.replace(R.id.BAZA,Map.newInstance())
-                        fragmentTransaction.commit()
-
+                       replaceFragment(Map())
                     }
                 }
             }
