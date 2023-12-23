@@ -9,14 +9,20 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
+<<<<<<< HEAD
 import android.os.CountDownTimer
+=======
+>>>>>>> 42ab6b3488278ab09da2d8d220baa7743dadf728
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+<<<<<<< HEAD
 import android.view.KeyEvent
 import android.view.View
 import androidx.activity.viewModels
+=======
+>>>>>>> 42ab6b3488278ab09da2d8d220baa7743dadf728
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -28,7 +34,6 @@ import io.ak1.BubbleTabBar
 import io.ak1.OnBubbleClickListener
 import kotlin.math.pow
 import kotlin.math.sqrt
-
 
 class MainActivity : AppCompatActivity() {
     private var is_frag = 1
@@ -42,9 +47,12 @@ class MainActivity : AppCompatActivity() {
     private var lastAccelerationValues = FloatArray(3)
     private var shakeThreshold = 30.5f
     private var minimum_needed_distance = 10.555733555811401E-4
+<<<<<<< HEAD
     private var timer : CountDownTimer? = null
     private var frg: Map? = null
 
+=======
+>>>>>>> 42ab6b3488278ab09da2d8d220baa7743dadf728
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapKitFactory.setApiKey("187c5f44-6646-457f-b619-eca2dca3cdbe")
@@ -162,6 +170,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     Log.i("info dist", "${title} - ${minimum_distance}")
+<<<<<<< HEAD
                     Log.i("info dist", "${is_frag}")
                     Log.i("info dist", "${liveData.flag_view.value}")
                     if (minimum_needed_distance >= minimum_distance && liveData.flag_view.value != true && is_frag != 2){
@@ -172,6 +181,10 @@ class MainActivity : AppCompatActivity() {
                             replaceFragment(Map())
                             is_frag = 2
                         }
+=======
+                    if (minimum_needed_distance >= minimum_distance){
+                       replaceFragment(Map())
+>>>>>>> 42ab6b3488278ab09da2d8d220baa7743dadf728
                     }
                 }
             }
