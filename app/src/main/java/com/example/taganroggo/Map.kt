@@ -119,6 +119,7 @@ class Map() : Fragment() {
             }
         }
 
+        
     }
 
     override fun onCreateView(
