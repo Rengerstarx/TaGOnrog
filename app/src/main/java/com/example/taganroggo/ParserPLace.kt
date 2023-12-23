@@ -48,7 +48,7 @@ class ParserPLace {
                 visitors.add(partnerSnapshot.value.toString())
             }
             val place = Place(
-                adress = it.child("Adress").value.toString(),
+                adress = it.child("Addres").value.toString(),
                 name = it.child("Name").value.toString(),
                 photo = photos,
                 tags = tags,

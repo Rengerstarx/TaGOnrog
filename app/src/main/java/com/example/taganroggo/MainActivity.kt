@@ -9,15 +9,14 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
-<<<<<<< HEAD
+import android.os.CountDownTimer
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-=======
 import android.view.KeyEvent
 import android.view.View
->>>>>>> origin/main
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -32,7 +31,8 @@ import kotlin.math.sqrt
 
 
 class MainActivity : AppCompatActivity() {
-    private var fl = false
+    private var is_frag = 1
+    private val liveData: DataForElement by viewModels()
     private lateinit var bubble: BubbleTabBar
     private lateinit var binding: ActivityMainBinding
     private lateinit var sensorManager: SensorManager
@@ -41,7 +41,10 @@ class MainActivity : AppCompatActivity() {
     private var accelerationValues = FloatArray(3)
     private var lastAccelerationValues = FloatArray(3)
     private var shakeThreshold = 30.5f
-    private var minimum_needed_distance = 4.555733555811401E-4
+    private var minimum_needed_distance = 10.555733555811401E-4
+    private var timer : CountDownTimer? = null
+    private var frg: Map? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapKitFactory.setApiKey("187c5f44-6646-457f-b619-eca2dca3cdbe")
@@ -60,12 +63,16 @@ class MainActivity : AppCompatActivity() {
             override fun onBubbleClick(id: Int) {
                 when(id){
                     R.id.List -> {
+                        is_frag = 1
                         replaceFragment(PlaceList())
                     }
                     R.id.Map -> {
+                        frg = Map()
                         replaceFragment(Map())
+                        is_frag = 2
                     }
                     R.id.Profile -> {
+                        is_frag = 3
                         replaceFragment(Profile())
                     }
                 }
@@ -104,17 +111,18 @@ class MainActivity : AppCompatActivity() {
                 //Log.i("Dibug1", "${acceleration}")
                 if (acceleration > shakeThreshold) {
                     isOnPlace()
-                    handleShake()
                 }
             }
         }
     }
     fun replaceFragment(fragment: Fragment){
-        Log.i("Dibug1", "fragment")
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.BAZA,fragment)
-        fragmentTransaction.commit()
+        if (is_frag != 2) {
+            Log.i("Dibug1", "fragment")
+            val fragmentManager = supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.replace(R.id.BAZA, fragment)
+            fragmentTransaction.commit()
+        }
     }
     private fun handleShake() {
 // Код для обработки тряски телефона
@@ -150,15 +158,20 @@ class MainActivity : AppCompatActivity() {
                         if (minimum_distance>distance){
                             minimum_distance = distance
                             title = item.name
+                            liveData.data.value = item
                         }
                     }
                     Log.i("info dist", "${title} - ${minimum_distance}")
-                    if (minimum_needed_distance >= minimum_distance){
-                        val fragmentManager = supportFragmentManager
-                        val fragmentTransaction = fragmentManager.beginTransaction()
-                        fragmentTransaction.replace(R.id.BAZA,Map.newInstance())
-                        fragmentTransaction.commit()
-
+                    Log.i("info dist", "${is_frag}")
+                    Log.i("info dist", "${liveData.flag_view.value}")
+                    if (minimum_needed_distance >= minimum_distance && liveData.flag_view.value != true && is_frag != 2){
+                        Log.i("info dist", "now fragment - ${is_frag}")
+                        Log.i("info dist", "${liveData.data.value!!.time}")
+                        liveData.flag_view.value = true
+                        if (is_frag != 2) {
+                            replaceFragment(Map())
+                            is_frag = 2
+                        }
                     }
                 }
             }
@@ -166,6 +179,9 @@ class MainActivity : AppCompatActivity() {
 
         return
     }
+
+
+
     fun checkPermissions() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && ContextCompat.checkSelfPermission(this , Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){

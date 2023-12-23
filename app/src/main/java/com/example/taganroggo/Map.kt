@@ -6,12 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.PointF
+import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import com.yandex.mapkit.map.Map
@@ -24,13 +27,21 @@ import android.view.Gravity
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
+import androidx.fragment.app.activityViewModels
+import androidx.viewpager2.widget.ViewPager2
+import com.example.taganroggo.Adapters.PlacePhotoAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -48,6 +59,7 @@ import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
+import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.runtime.image.ImageProvider
 import java.lang.Math.pow
 import kotlin.math.pow
@@ -55,72 +67,91 @@ import kotlin.math.sqrt
 
 
 class Map() : Fragment() {
-
     private lateinit var mapView: MapView
-    private var zoomValue: Float = 16.5f
-    private var startLocation = Point(55.755865, 37.573672)
+    private var zoomValue: Float = 13.0f
     private lateinit var pLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var mapKit: MapKit
     private lateinit var dialog : Dialog
+    private val liveData: DataForElement by activityViewModels()
+    private lateinit var location : UserLocationLayer
     private var placemarkList: ArrayList<PlacemarkMapObject> = arrayListOf()
-    private var name_places : List<String> = listOf(
-        "Газлер",
-        "Каменка",
-        "Чехов сад",
-        "Домик Чехова")
+    var dialogView: View? = null
     var curentLocation: Location? = null
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     //lateinit var pinsCollection : MapObjectCollection
 
     private val mapObjectTapListener = object : MapObjectTapListener {
         override fun onMapObjectTap(mapObject: MapObject, point: Point): Boolean{
-            val dialogView = layoutInflater.inflate(R.layout.bottom_sheet_for_map, null)
+            dialogView = layoutInflater.inflate(R.layout.bottom_sheet_for_map, null)
             dialog = BottomSheetDialog(requireContext(), R.style.DialogAnimation)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setContentView(dialogView)
-            dialog.getWindow()?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+            dialog.setContentView(dialogView!!)
+            dialog.getWindow()?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            );
             dialog.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
             dialog.getWindow()?.getAttributes()?.windowAnimations = R.style.DialogAnimation;
             dialog.getWindow()?.setGravity(Gravity.BOTTOM);
+
+            val image = dialogView?.findViewById<ViewPager2>(R.id.image_list_info)
+            val time = dialogView?.findViewById<TextView>(R.id.textTime)
+            val addr = dialogView?.findViewById<TextView>(R.id.textAdress)
+            val name = dialogView?.findViewById<TextView>(R.id.textName)
+            val layoutTags = dialogView?.findViewById<LinearLayout>(R.id.tags_mas)
+            val info = dialogView?.findViewById<TextView>(R.id.info_place)
+
+            val adapterPager = PlacePhotoAdapter()
+            adapterPager.addImage(liveData.data.value!!.photo)
+            image!!.adapter = adapterPager
+            time!!.text = liveData.data.value!!.time
+            addr!!.text = liveData.data.value!!.adress
+            name!!.text = liveData.data.value!!.name
+
+            var allTags = 0
+            layoutTags!!.removeAllViews()
+            for (str in liveData.data.value!!.tags) {
+                val cardView = CardView(requireContext())
+                val cardParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                cardParams.setMargins(5, 5, 5, 5)
+                cardView.layoutParams = cardParams
+                cardView.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.mainGreen)) // Устанавливаем цвет фона
+                cardView.radius = 40f // Устанавливаем радиус скругления углов
+
+                val textView = TextView(context)
+                val textParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                textView.layoutParams = textParams
+                textView.text = (" " + str + " ").toString()
+                val f = Typeface.create("Roboto", Typeface.NORMAL);
+                textView.setTypeface(f)
+                textView.textSize = 18f // Устанавливаем размер текста
+                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white)) // Устанавливаем цвет текста
+                textView.setPadding(15, 10, 15, 10) // Устанавливаем отступы
+                cardView.addView(textView) // Добавляем TextView в CardView
+                allTags++
+
+                layoutTags.addView(cardView)
+                if (allTags > 3) {
+                    textView.text = "+${liveData.data.value!!.tags.size - 3}"
+                    break
+                }
+            }
+
             dialog.show()
+            dialog.setOnCancelListener {
+                liveData.flag_view.value = false
+            }
             return true
         }
     }
 
-    private val mapCameraListener = object : CameraListener{
-        override fun onCameraPositionChanged(
-            map: Map,
-            cameraPosition: CameraPosition,
-            cameraUpdateReason: CameraUpdateReason,
-            finished: Boolean
-        ) {
-            if (finished) { // Если камера закончила движение
-                println(placemarkList.size)
 
-                for (i in 0..3){
-                    println(name_places[i])
-                    val point_coord = placemarkList[i].geometry
-                    val camera_coord = cameraPosition.target
-                    val one = camera_coord.latitude - point_coord.latitude
-                    val two = camera_coord.longitude - point_coord.longitude
-                    val distance = sqrt(one.pow(2)
-                            + two.pow(2))
-                    println(distance)
-                    if (cameraPosition.zoom > 15.0f){
-                        placemarkList[i].setIcon(ImageProvider.fromResource(requireContext(), R.drawable.icon_ex2))
-                    }
-                    else {
-                        placemarkList[i].setIcon(ImageProvider.fromResource(requireContext(), R.drawable.icon_ex))
-                    }
-                }
-                Log.i("Dibug1", "----------------")
-
-                zoomValue = cameraPosition.zoom // После изменения позиции камеры сохраняем величину зума
-            }
-        }
-
-        
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -138,6 +169,12 @@ class Map() : Fragment() {
         super.onStop()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onStop()
+        MapKitFactory.getInstance().onStop()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -146,18 +183,14 @@ class Map() : Fragment() {
         val center_button = activity?.findViewById(R.id.center_pos) as Button
 
         center_button.setOnClickListener {
-            checkPermissions()
-            center_user_position()
+            go_to_user_position()
         }
+
+        moveToStartLocation()
 
 
         MapKitFactory.getInstance().onStart()
         mapView.onStart()
-        registerPermissionListener()
-        checkPermissions()
-        center_user_position()
-        //setMarkerInStartLocation()
-        //pinsCollection = mapView.map.mapObjects.addCollection()
 
         val points = listOf(
             Point(47.210041, 38.937439),
@@ -172,20 +205,26 @@ class Map() : Fragment() {
             placemarkMapObject.addTapListener(mapObjectTapListener)
             placemarkList.add(placemarkMapObject)
         }
-        mapView.map.addCameraListener(mapCameraListener)
 
-        var location = mapKit.createUserLocationLayer(mapView.mapWindow)
+        location = mapKit.createUserLocationLayer(mapView.mapWindow)
         location.isVisible = true
+
+        checkForView()
+
     }
 
-    private fun moveToStartLocation(p : Point) {
+    fun checkForView(){
+        if (liveData.flag_view.value == true) {
+            ViewInfoForPlace()
+        }
+    }
+
+    private fun moveToStartLocation() {
         mapView.map.move(
-            CameraPosition(p, zoomValue, 0.0f, 0.0f),
-            Animation(Animation.Type.SMOOTH, 5f),
-            null)
+            CameraPosition(Point(47.221183, 38.914698), zoomValue, 0.0f, 0.0f))
     }
 
-    private fun center_user_position(){
+    private fun go_to_user_position(){
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         val task = fusedLocationProviderClient.lastLocation
         if (ActivityCompat.checkSelfPermission(
@@ -205,7 +244,8 @@ class Map() : Fragment() {
             if(it!=null){
                 Log.i("Dibug1", "zaebic")
                 val startLoc = Point(it.latitude, it.longitude)
-                moveToStartLocation(startLoc)
+                mapView.map.move(
+                    CameraPosition(startLoc, 15.0f, 0.0f, 0.0f))
             }
         }
         //Log.i("tag", "${user_location}")
@@ -229,8 +269,78 @@ class Map() : Fragment() {
         }
     }
 
-    companion object {
-        fun newInstance() = Map()
+    @SuppressLint("UseRequireInsteadOfGet")
+    fun ViewInfoForPlace(){
+        dialogView = layoutInflater.inflate(R.layout.bottom_sheet_for_map, null)
+        dialog = BottomSheetDialog(requireContext(), R.style.DialogAnimation)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(dialogView!!)
+        dialog.getWindow()?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        dialog.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow()?.getAttributes()?.windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow()?.setGravity(Gravity.BOTTOM);
+
+        val image = dialogView?.findViewById<ViewPager2>(R.id.image_list_info)
+        val time = dialogView?.findViewById<TextView>(R.id.textTime)
+        val addr = dialogView?.findViewById<TextView>(R.id.textAdress)
+        val name = dialogView?.findViewById<TextView>(R.id.textName)
+        val layoutTags = dialogView?.findViewById<LinearLayout>(R.id.tags_mas)
+        val info = dialogView?.findViewById<TextView>(R.id.info_place)
+
+        val adapterPager = PlacePhotoAdapter()
+        adapterPager.addImage(liveData.data.value!!.photo)
+        image!!.adapter = adapterPager
+        time!!.text = liveData.data.value!!.time
+        addr!!.text = liveData.data.value!!.adress
+        name!!.text = liveData.data.value!!.name
+
+        var allTags = 0
+        layoutTags!!.removeAllViews()
+        for (str in liveData.data.value!!.tags) {
+            val cardView = CardView(requireContext())
+            val cardParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            cardParams.setMargins(5, 5, 5, 5)
+            cardView.layoutParams = cardParams
+            cardView.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.mainGreen)) // Устанавливаем цвет фона
+            cardView.radius = 40f // Устанавливаем радиус скругления углов
+
+            val textView = TextView(context)
+            val textParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            textView.layoutParams = textParams
+            textView.text = (" " + str + " ").toString()
+            val f = Typeface.create("Roboto", Typeface.NORMAL);
+            textView.setTypeface(f)
+            textView.textSize = 18f // Устанавливаем размер текста
+            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white)) // Устанавливаем цвет текста
+            textView.setPadding(15, 10, 15, 10) // Устанавливаем отступы
+            cardView.addView(textView) // Добавляем TextView в CardView
+            allTags++
+
+            layoutTags.addView(cardView)
+            if (allTags > 3) {
+                textView.text = "+${liveData.data.value!!.tags.size - 3}"
+                break
+            }
+        }
+
+        dialog.show()
+        dialog.setOnCancelListener {
+            liveData.flag_view.value = false
+        }
+
     }
+
+    //companion object {
+      //  fun newInstance() = Map()
+    //}
 
 }
