@@ -10,11 +10,9 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.telephony.ims.ImsManager
+import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.PointerIcon
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Switch
@@ -24,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.getSystemService
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.taganroggo.Adapters.PlaceAdapter
 import com.example.taganroggo.databinding.FragmentPlaceListBinding
@@ -36,6 +35,7 @@ class PlaceList : Fragment(), PlaceAdapter.Listener {
 
     private lateinit var binding: FragmentPlaceListBinding
     val MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+    private lateinit var adapter: PlaceAdapter
     private var nowRadius: Double = 6000.0
     private var allPlaceList: MutableList<Place>? = null
     private var isClosest = false
@@ -46,7 +46,7 @@ class PlaceList : Fragment(), PlaceAdapter.Listener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPlaceListBinding.inflate(inflater,container,false)
-        val adapter= PlaceAdapter(this, requireContext())
+        adapter= PlaceAdapter(this, requireContext())
         binding.rcPlaces.layoutManager = LinearLayoutManager(requireContext())
         binding.rcPlaces.adapter=adapter
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -62,6 +62,17 @@ class PlaceList : Fragment(), PlaceAdapter.Listener {
             allPlaceList = places
             adapter.createAll(places)
         }
+        var editor = binding.root.findViewById<androidx.appcompat.widget.AppCompatAutoCompleteTextView>(R.id.searchView)
+        editor.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+                val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(editor.windowToken, 0)
+                editor.clearFocus()
+                search(editor.text.toString())
+                return@OnKeyListener true
+            }
+            false
+        })
         binding.root.findViewById<ImageView>(R.id.moreOption).setOnClickListener {
             val dialog = BottomSheetDialog(requireContext())
             val view = layoutInflater.inflate(R.layout.bottom_sheet_filter, null)
@@ -72,7 +83,7 @@ class PlaceList : Fragment(), PlaceAdapter.Listener {
             view.findViewById<Switch>(R.id.switch1).isChecked = isClosest
             view.findViewById<CardView>(R.id.buttonFilter).setOnClickListener {
                 nowRadius = (view.findViewById<SeekBar>(R.id.seekBar4).progress + 1) * 1000.0
-                var newList = mutableListOf<Place>()
+                val newList = mutableListOf<Place>()
                 if (isLocationEnabled(requireContext()) && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                     val locationManager: LocationManager =
@@ -140,6 +151,18 @@ class PlaceList : Fragment(), PlaceAdapter.Listener {
     private fun isLocationEnabled(context: Context): Boolean {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    private fun search(str: String) {
+        val newList = mutableListOf<Place>()
+        allPlaceList?.forEach {
+            if (it.name.contains(str, ignoreCase = true)) {
+                newList.add(it)
+            }
+        }
+        adapter.createAll(newList)
+        isClosest = false
+        nowRadius = 6000.0
     }
 
 }
