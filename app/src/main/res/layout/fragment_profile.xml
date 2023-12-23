@@ -28,6 +28,13 @@
             app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="22dp">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcPlas"
+                android:layout_width="match_parent"
+                android:layout_height="425dp"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp" />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -52,13 +59,6 @@
                 android:textSize="18sp"
                 android:text="Никита Прокопович" />
         </androidx.cardview.widget.CardView>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="439dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_gravity="bottom" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="140dp"

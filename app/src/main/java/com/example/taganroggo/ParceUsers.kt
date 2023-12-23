@@ -1,13 +1,14 @@
 package com.example.taganroggo
 
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.FirebaseDatabase
 
 class ParceUsers {
 
     fun parsUser(dataSnapshot: DataSnapshot): User {
-        var visit = mutableMapOf<String, Boolean>()
-        for (partnerSnapshot in dataSnapshot.child("Places").children) {
-            visit[dataSnapshot.key.toString()] = partnerSnapshot.value.toString().toBoolean()
+        var visit = mutableListOf<PlaceData>()
+        dataSnapshot.child("Place").children.forEach {
+            visit.add(PlaceData(it.key.toString().toInt(), it.child("Count").value.toString().toInt(), it.child("Data").value.toString()))
         }
         val user = User(
             mail = dataSnapshot.child("Mail").value.toString(),

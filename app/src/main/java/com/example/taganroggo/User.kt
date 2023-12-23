@@ -6,4 +6,4 @@ data class User(val mail: String,
                 val score: Int,
                 val ava: String,
                 val fon: String,
-                val visits: MutableMap<String,Boolean>)
+                val visits: MutableList<PlaceData>)

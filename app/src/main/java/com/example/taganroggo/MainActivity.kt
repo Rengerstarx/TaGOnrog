@@ -25,7 +25,6 @@ import io.ak1.OnBubbleClickListener
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-
 class MainActivity : AppCompatActivity() {
     private var fl = false
     private lateinit var bubble: BubbleTabBar
