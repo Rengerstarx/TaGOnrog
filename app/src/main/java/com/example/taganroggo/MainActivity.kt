@@ -1,7 +1,11 @@
 package com.example.taganroggo
 
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.taganroggo.databinding.ActivityMainBinding
 import com.google.firebase.FirebaseApp

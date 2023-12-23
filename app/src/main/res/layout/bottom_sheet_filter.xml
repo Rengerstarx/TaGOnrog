@@ -7,7 +7,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_line"/>
 
         <TextView
             android:id="@+id/textTitle"
@@ -29,7 +37,7 @@
                 android:id="@+id/textView3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.35"
+                android:layout_weight="0.55"
                 android:text="Места по близости"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
@@ -40,8 +48,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.35"
-                android:max="10"
-                android:progress="1" />
+                android:max="5"
+                android:progress="0" />
 
 
         </LinearLayout>
@@ -49,7 +57,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:id="@+id/textView4"
@@ -68,13 +77,13 @@
         </LinearLayout>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/buttonFilter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/mainGreen"
             app:cardCornerRadius="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp">
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp">
 
             <TextView
                 android:id="@+id/textView2"
@@ -85,7 +94,7 @@
                 android:text="Показать варианты"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
         </androidx.cardview.widget.CardView>
 
 

@@ -22,7 +22,6 @@ import com.squareup.picasso.Picasso
 
 class PlaceAdapter(val listener: Listener, val context: Context): RecyclerView.Adapter<PlaceAdapter.PlaceHolder>() {
     private var PlaceList=ArrayList<Place>()
-    var PlaceListBuffer=ArrayList<Place>()
 
     class PlaceHolder(item: View): RecyclerView.ViewHolder(item) {
         val binding = PlaceBinding.bind(item)
@@ -34,6 +33,7 @@ class PlaceAdapter(val listener: Listener, val context: Context): RecyclerView.A
             textName.text = place.name
             textTime.text = place.time
             var allTags = 0
+            layoutTags.removeAllViews()
             for (str in place.tags) {
                 val cardView = CardView(context)
                 val cardParams = LinearLayout.LayoutParams(
@@ -91,23 +91,19 @@ class PlaceAdapter(val listener: Listener, val context: Context): RecyclerView.A
 
     @SuppressLint("NotifyDataSetChanged")
     fun createAll(partnerList: MutableList<Place>){
+        deleter()
         val partnerList2 = mutableListOf<Place>()
         partnerList.forEach {
             partnerList2.add(it)
         }
         println(partnerList2)
         PlaceList = partnerList2 as ArrayList<Place>
-        PlaceListBuffer = partnerList2
         notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun deleter(){
-        var t=PlaceList.size
-        var h=0
-        while(h<t){
-            PlaceList.removeAt(0)
-            h+=1
-        }
+        PlaceList.removeAll(PlaceList.toSet())
     }
 
     interface Listener{
