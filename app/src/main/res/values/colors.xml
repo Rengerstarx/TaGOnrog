@@ -17,6 +17,7 @@
     <color name="voice_icon_color">#999999</color>
     <color name="search_cursor_bg">#424242</color>
     <color name="bezeviy">#F5F5F5</color>
+    <color name="neponBlack">#111F26</color>
 
 
 </resources>

@@ -3,6 +3,7 @@ package com.example.taganroggo
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -16,6 +17,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -56,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         //https://github.com/akshay2211/BubbleTabBar
         bubble = binding.bubbleTabBar
         replaceFragment(PlaceList())
+        setStatusBarColor("#8F847E")
         bubble.addBubbleListener(object : OnBubbleClickListener {
             override fun onBubbleClick(id: Int) {
                 when (id) {
@@ -134,6 +138,19 @@ class MainActivity : AppCompatActivity() {
     private fun handleShake() {
 // Код для обработки тряски телефона
 
+    }
+
+    fun setStatusBarColor(color: String?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val window: Window = window
+            val statusBarColor: Int = Color.parseColor(color)
+            if (statusBarColor == Color.BLACK && window.getNavigationBarColor() === Color.BLACK) {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            } else {
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            }
+            window.setStatusBarColor(statusBarColor)
+        }
     }
 
     private fun isOnPlace() {

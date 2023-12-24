@@ -38,7 +38,7 @@ class Profile : Fragment(), PlaceAdapterUser.Listener {
             FirebaseAPI().getPicLogo(user.fon) { it3 ->
                 Picasso.get().load(it3).into(binding.imageView)
             }
-            binding.textView5.text = "${user.name} ${user.surname}"
+            binding.textView5.text = "${user.name} ${user.surname}\nПосещено мест: ${user.visits.count()}"
             binding.textView11.text = user.score.toString()
             user.visits.forEach { it4 ->
                 FirebaseAPI().takeOne("Places", it4.placeID) { it5 ->
