@@ -81,6 +81,7 @@ class PlaceAdapter(val listener: Listener, val context: Context): RecyclerView.A
         return  PlaceHolder(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onBindViewHolder(holder: PlaceHolder, position: Int) {
         holder.bind(PlaceList[position], listener, context)
     }

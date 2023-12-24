@@ -10,6 +10,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.telephony.ims.ImsManager
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
@@ -127,9 +128,12 @@ class PlaceList : Fragment(), PlaceAdapter.Listener {
         return binding.root
     }
 
-    override fun onClick(partner: Place) {
-
-    }
+    //override fun onClick(partner: Place) {
+        //Log.i("Dibug1", "clicl")
+        //liveData.flag_view.value = true
+        //replaceFragment(Map())
+        //is_frag = 2
+    //}
 
     // Обработка результата запроса разрешения
     override fun onRequestPermissionsResult(requestCode: Int,
@@ -163,6 +167,12 @@ class PlaceList : Fragment(), PlaceAdapter.Listener {
         adapter.createAll(newList)
         isClosest = false
         nowRadius = 6000.0
+    }
+
+    override fun onClick(partner: Place) {
+        Log.i("Dibug1", "clicl")
+        val mAct = (activity as MainActivity)
+        mAct.ListenerForPlace(partner)
     }
 
 }

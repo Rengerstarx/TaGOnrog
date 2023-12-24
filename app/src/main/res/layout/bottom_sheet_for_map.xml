@@ -121,13 +121,22 @@
                     <TextView
                         android:id="@+id/info_place"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="250dp"
                         android:layout_marginLeft="20dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginRight="20dp"
-                        android:layout_marginBottom="30dp"
+                        android:layout_marginBottom="-70dp"
                         android:text="TextView"
                         android:textAlignment="viewStart" />
+
+                    <Button
+                        android:id="@+id/btn_route"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="80dp"
+                        android:layout_marginRight="290dp"
+                        android:text="Button" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
