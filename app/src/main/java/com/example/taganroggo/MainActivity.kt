@@ -20,10 +20,12 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.taganroggo.Adapters.PlaceAdapter
 import com.example.taganroggo.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
 import io.ak1.BubbleTabBar
 import io.ak1.OnBubbleClickListener
 import kotlin.math.pow
@@ -40,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     private var accelerationValues = FloatArray(3)
     private var lastAccelerationValues = FloatArray(3)
     private var shakeThreshold = 30.5f
-    private var minimum_needed_distance = 10.555733555811401E-4
+    private var minimum_needed_distance = 0.010
     private var timer: CountDownTimer? = null
     private var frg: Map? = null
 
@@ -153,6 +155,8 @@ class MainActivity : AppCompatActivity() {
         }
         task.addOnSuccessListener {
             if (it != null) {
+                val s = Point(it.latitude, it.longitude)
+                liveData.point_user.value = s
                 val latitude = it.latitude
                 val longitude = it.longitude
                 val firebase = FirebaseAPI()
@@ -180,20 +184,27 @@ class MainActivity : AppCompatActivity() {
                             replaceFragment(Map())
                             is_frag = 2
                         }
-                        }
                     }
                 }
             }
-
-            return
         }
-        fun calculateDistance(x1: Double, y1: Double, x2: Double, y2: Double): Double {
-            val deltaX = x2 - x1
-            val deltaY = y2 - y1
+
+        return
+    }
+    fun calculateDistance(x1: Double, y1: Double, x2: Double, y2: Double): Double {
+        val deltaX = x2 - x1
+        val deltaY = y2 - y1
 
 // Используем теорему Пифагора для вычисления расстояния
-            val distance = sqrt(deltaX.pow(2) + deltaY.pow(2))
-            return distance
-        }
+        val distance = sqrt(deltaX.pow(2) + deltaY.pow(2))
+        return distance
+    }
+
+    fun ListenerForPlace(p : Place){
+        liveData.data.value = p
+        liveData.flag_view.value = true
+        replaceFragment(Map())
+        is_frag = 2
+    }
 
 }

@@ -48,7 +48,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.RequestPoint
+import com.yandex.mapkit.RequestPointType
+import com.yandex.mapkit.directions.DirectionsFactory
+import com.yandex.mapkit.directions.driving.DrivingOptions
+import com.yandex.mapkit.directions.driving.DrivingRoute
+import com.yandex.mapkit.directions.driving.DrivingSession
+import com.yandex.mapkit.directions.driving.VehicleOptions
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.layers.ObjectEvent
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.CameraUpdateReason
@@ -60,15 +68,20 @@ import com.yandex.mapkit.map.PlacemarkMapObject
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
+import com.yandex.mapkit.user_location.UserLocationObjectListener
+import com.yandex.mapkit.user_location.UserLocationView
+import com.yandex.runtime.Error
 import com.yandex.runtime.image.ImageProvider
 import java.lang.Math.pow
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 
-class Map() : Fragment() {
+class Map() : Fragment(), DrivingSession.DrivingRouteListener{
     private lateinit var mapView: MapView
     private var zoomValue: Float = 13.0f
+    private val startPoint = Point(47.202240, 38.935643)
+    private val endPoint = Point(47.210883, 38.922896)
     private lateinit var pLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var mapKit: MapKit
     private lateinit var dialog : Dialog
@@ -79,6 +92,7 @@ class Map() : Fragment() {
     var curentLocation: Location? = null
     lateinit var places : MutableList<Place>
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private var drivingSession:DrivingSession? = null
     //lateinit var pinsCollection : MapObjectCollection
 
     private val mapObjectTapListener = object : MapObjectTapListener {
@@ -95,10 +109,15 @@ class Map() : Fragment() {
             dialog.getWindow()?.getAttributes()?.windowAnimations = R.style.DialogAnimation;
             dialog.getWindow()?.setGravity(Gravity.BOTTOM);
             lateinit var obj : Place
+            var x = 1.0
             for (i in places){
-                Log.i("Dibug1", "${point.latitude} - ${i.latitude} ^ ${point.longitude} - ${i.longitude}")
-                if (point.latitude == i.latitude && point.longitude == i.longitude){
-                    val obj = i
+                val deltaX = i.latitude - point.latitude
+                val deltaY = i.longitude - point.longitude
+                val distance = sqrt(deltaX.pow(2) + deltaY.pow(2))
+                if (distance < x){
+                    x = distance
+                    obj = i
+                    Log.i("Dibug1", "${distance}")
                 }
             }
 
@@ -157,6 +176,15 @@ class Map() : Fragment() {
             }
             return true
         }
+
+        fun calculateDistance(x1: Double, y1: Double, x2: Double, y2: Double): Double {
+            val deltaX = x2 - x1
+            val deltaY = y2 - y1
+
+// Используем теорему Пифагора для вычисления расстояния
+            val distance = sqrt(deltaX.pow(2) + deltaY.pow(2))
+            return distance
+        }
     }
 
 
@@ -168,13 +196,6 @@ class Map() : Fragment() {
         MapKitFactory.initialize(requireContext())
         mapKit = MapKitFactory.getInstance()
         return inflater.inflate(R.layout.fragment_map, container, false)
-    }
-
-
-    override fun onStop() {
-        mapView.onStop()
-        MapKitFactory.getInstance().onStop()
-        super.onStop()
     }
 
     override fun onDestroy() {
@@ -204,8 +225,10 @@ class Map() : Fragment() {
         firebase.takeAll("Places") {
             places = ParserPLace().parsPalces(it)
             for (i in places) {
+                Log.i("Dibug1", "add ${i.latitude} - ${i.longitude}")
                 val placemarkMapObject =
                     mapView.map.mapObjects.addPlacemark(
+
                         Point(i.latitude, i.longitude),
                         ImageProvider.fromResource(requireContext(), R.drawable.icon_for_map)
                     ) // Добавляем метку со значком
@@ -261,23 +284,6 @@ class Map() : Fragment() {
         //Log.i("tag", "${user_location}")
     }
 
-    fun checkPermissions()  {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            pLauncher.launch(arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ))
-        }
-    }
-
-    private fun registerPermissionListener(){
-        pLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ){
-
-        }
-    }
 
     @SuppressLint("UseRequireInsteadOfGet")
     fun ViewInfoForPlace(){
@@ -288,11 +294,13 @@ class Map() : Fragment() {
         dialog.getWindow()?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
-        )
+        );
         dialog.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow()?.getAttributes()?.windowAnimations = R.style.DialogAnimation;
         dialog.getWindow()?.setGravity(Gravity.BOTTOM);
 
+
+        val btn = dialogView?.findViewById<Button>(R.id.btn_route)
         val image = dialogView?.findViewById<ViewPager2>(R.id.image_list_info)
         val time = dialogView?.findViewById<TextView>(R.id.textTime)
         val addr = dialogView?.findViewById<TextView>(R.id.textAdress)
@@ -352,10 +360,39 @@ class Map() : Fragment() {
             liveData.flag_view.value = false
         }
 
+        btn!!.setOnClickListener{
+            val drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
+            val drivingOptions = DrivingOptions().apply {
+                routesCount = 1
+            }
+            val vehicleOptions = VehicleOptions()
+            var points:ArrayList<RequestPoint> = ArrayList()
+            points.add(RequestPoint(Point(liveData.point_user.value!!.latitude, liveData.point_user.value!!.longitude), RequestPointType.WAYPOINT, null, null))
+            points.add(RequestPoint(Point(liveData.data.value!!.latitude, liveData.data.value!!.longitude), RequestPointType.WAYPOINT, null, null))
+            drivingSession = drivingRouter.requestRoutes(
+                points,
+                drivingOptions,
+                vehicleOptions,
+                this
+            )
+            dialog.dismiss()
+        }
+
     }
 
+    override fun onDrivingRoutes(p0: MutableList<DrivingRoute>) {
+        for(route in p0){
+            mapView.map.mapObjects.addPolyline(route.geometry)
+        }
+    }
+
+    override fun onDrivingRoutesError(p0: Error) {
+        TODO("Not yet implemented")
+    }
+
+
     //companion object {
-      //  fun newInstance() = Map()
+    //  fun newInstance() = Map()
     //}
 
 }
