@@ -179,6 +179,9 @@ class MainActivity : AppCompatActivity() {
                     if (minimum_needed_distance >= minimum_distance && liveData.flag_view.value != true && is_frag != 2) {
                         Log.i("info dist", "now fragment - ${is_frag}")
                         Log.i("info dist", "${liveData.data.value!!.time}")
+                        val sharedPreferences = getSharedPreferences("SPDB", Context.MODE_PRIVATE)
+                        val uid = sharedPreferences.getInt("id", 1)
+                        FirebaseAPI().addVisitByName(liveData.data.value!!.name, uid, liveData.data.value!!.id)
                         liveData.flag_view.value = true
                         if (is_frag != 2) {
                             replaceFragment(Map())

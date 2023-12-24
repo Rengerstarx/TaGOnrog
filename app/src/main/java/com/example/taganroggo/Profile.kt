@@ -59,6 +59,7 @@ class Profile : Fragment(), PlaceAdapterUser.Listener {
                 FirebaseDatabase.getInstance().getReference("Places").child(placeData.placeID.toString()).child("Visitors").child(uid.toString()).child("Rait").setValue(binding.ratingBar.rating.toInt())
                 FirebaseDatabase.getInstance().getReference("Users").child(uid.toString()).child("Place").child(placeData.placeID.toString()).child("Coment").setValue(true)
                 binding.cardRate.visibility = View.GONE
+                placeData.coment = true
             }
             binding.button2.setOnClickListener {
                 binding.cardRate.visibility = View.GONE

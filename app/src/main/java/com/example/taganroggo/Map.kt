@@ -40,7 +40,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.example.taganroggo.Adapters.ComentAdapter
+import com.example.taganroggo.Adapters.PlaceAdapter
 import com.example.taganroggo.Adapters.PlacePhotoAdapter
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -308,10 +312,6 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
         val layoutTags = dialogView?.findViewById<LinearLayout>(R.id.tags_mas)
         val info = dialogView?.findViewById<TextView>(R.id.info_place)
 
-        val sharedPreferences = requireContext().getSharedPreferences("SPDB", Context.MODE_PRIVATE)
-        val uid = sharedPreferences.getInt("id", 1)
-        FirebaseAPI().addVisitByName(liveData.data.value!!.name, uid, liveData.data.value!!.id)
-
         val adapterPager = PlacePhotoAdapter()
         adapterPager.addImage(liveData.data.value!!.photo)
         image!!.adapter = adapterPager
@@ -330,7 +330,7 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
             )
             cardParams.setMargins(5, 5, 5, 5)
             cardView.layoutParams = cardParams
-            cardView.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.mainGreen)) // Устанавливаем цвет фона
+            cardView.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.mainBlue)) // Устанавливаем цвет фона
             cardView.radius = 40f // Устанавливаем радиус скругления углов
 
             val textView = TextView(context)
@@ -353,6 +353,20 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
                 textView.text = "+${liveData.data.value!!.tags.size - 3}"
                 break
             }
+
+            val adapter = ComentAdapter()
+            dialogView?.findViewById<RecyclerView>(R.id.rcView)?.layoutManager = LinearLayoutManager(requireContext())
+            dialogView?.findViewById<RecyclerView>(R.id.rcView)?.adapter = adapter
+            FirebaseAPI().takeOne("Places", liveData.data.value!!.id) {
+                it.child("Visitors").children.forEach { it2 ->
+                    val key = it2.key.toString().toInt()
+                    FirebaseAPI().takeOne("Users", key) { it3 ->
+                        val user = ParceUsers().parsUser(it3)
+                        adapter.createElement(user, it2.child("Com").value.toString())
+                    }
+                }
+            }
+
         }
 
         dialog.show()
