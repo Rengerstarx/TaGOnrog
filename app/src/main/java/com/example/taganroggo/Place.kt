@@ -7,4 +7,6 @@ data class Place(val adress: String,
                  val time: String,
                  val visitors: MutableList<String>,
                  val latitude: Double,
-                 val longitude: Double)
+                 val longitude: Double,
+                 val info: String,
+                 val id: Int)

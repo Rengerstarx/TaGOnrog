@@ -28,6 +28,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
+                android:id="@+id/liner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -56,27 +57,27 @@
                         android:layout_height="1dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="5dp"
-                        android:background="@color/mainGreen" />
+                        android:background="#3F7EAA" />
 
                     <TextView
                         android:id="@+id/textView6"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
-                        android:textSize="18sp"
-                        android:textColor="@color/black"
                         android:layout_marginTop="5dp"
-                        android:text="Количество посещений: 10" />
+                        android:paddingLeft="10dp"
+                        android:text="Количество посещений: 10"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
 
                     <TextView
                         android:id="@+id/textView7"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
-                        android:textSize="18sp"
-                        android:textColor="@color/black"
                         android:layout_marginTop="5dp"
-                        android:text="Дата последнего посещения: 24.10.2003" />
+                        android:paddingLeft="10dp"
+                        android:text="Дата последнего посещения: 24.10.2003"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
 
                 </LinearLayout>
             </LinearLayout>

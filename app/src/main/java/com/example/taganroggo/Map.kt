@@ -288,7 +288,7 @@ class Map() : Fragment() {
         dialog.getWindow()?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
-        );
+        )
         dialog.getWindow()?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow()?.getAttributes()?.windowAnimations = R.style.DialogAnimation;
         dialog.getWindow()?.setGravity(Gravity.BOTTOM);
@@ -300,12 +300,17 @@ class Map() : Fragment() {
         val layoutTags = dialogView?.findViewById<LinearLayout>(R.id.tags_mas)
         val info = dialogView?.findViewById<TextView>(R.id.info_place)
 
+        val sharedPreferences = requireContext().getSharedPreferences("SPDB", Context.MODE_PRIVATE)
+        val uid = sharedPreferences.getInt("id", 1)
+        FirebaseAPI().addVisitByName(liveData.data.value!!.name, uid, liveData.data.value!!.id)
+
         val adapterPager = PlacePhotoAdapter()
         adapterPager.addImage(liveData.data.value!!.photo)
         image!!.adapter = adapterPager
         time!!.text = liveData.data.value!!.time
         addr!!.text = liveData.data.value!!.adress
         name!!.text = liveData.data.value!!.name
+        info!!.text = liveData.data.value!!.info
 
         var allTags = 0
         layoutTags!!.removeAllViews()

@@ -13,5 +13,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/ic_filter" />
+        app:srcCompat="@drawable/clear" />
 </androidx.constraintlayout.widget.ConstraintLayout>

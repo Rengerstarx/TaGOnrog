@@ -27,7 +27,9 @@ class ParserPLace {
             time = dataSnapshot.child("Time").value.toString(),
             visitors = visitors,
             latitude = dataSnapshot.child("Latitude").value.toString().toDouble(),
-            longitude = dataSnapshot.child("Longitude").value.toString().toDouble()
+            longitude = dataSnapshot.child("Longitude").value.toString().toDouble(),
+            info = dataSnapshot.child("Info").value.toString(),
+            id = dataSnapshot.key.toString().toInt()
         )
         return place
     }
@@ -55,7 +57,9 @@ class ParserPLace {
                 time = it.child("Time").value.toString(),
                 visitors = visitors,
                 latitude = it.child("Latitude").value.toString().toDouble(),
-                longitude = it.child("Longitude").value.toString().toDouble()
+                longitude = it.child("Longitude").value.toString().toDouble(),
+                info = it.child("Info").value.toString(),
+                id = it.key.toString().toInt()
             )
             places.add(place)
         }

@@ -3,6 +3,7 @@ package com.example.taganroggo.Adapters
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.provider.ContactsContract.Data
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,23 +14,20 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.marginTop
 import androidx.core.view.setMargins
 import androidx.recyclerview.widget.RecyclerView
-import com.example.taganroggo.FirebaseAPI
-import com.example.taganroggo.ParserPLace
-import com.example.taganroggo.PlaceData
-import com.example.taganroggo.R
+import com.example.taganroggo.*
 import com.example.taganroggo.databinding.Place2Binding
 import com.example.taganroggo.databinding.PlaceBinding
 import com.google.firebase.database.DataSnapshot
 import com.squareup.picasso.Picasso
 
 
-class PlaceAdapterUser(val context: Context): RecyclerView.Adapter<PlaceAdapterUser.PlaceUserHolder>() {
+class PlaceAdapterUser(val context: Context, val listener: Listener): RecyclerView.Adapter<PlaceAdapterUser.PlaceUserHolder>() {
     private var PlaceList=ArrayList<PlaceData>()
     private var PlaceData = ArrayList<DataSnapshot>()
 
     class PlaceUserHolder(item: View): RecyclerView.ViewHolder(item) {
         val binding = Place2Binding.bind(item)
-        fun bind(place: PlaceData, data: DataSnapshot) = with(binding) {
+        fun bind(place: PlaceData, data: DataSnapshot, listener: Listener) = with(binding) {
             val placeOne = ParserPLace().parsPalce(data)
             val adapterPager = PlacePhotoAdapter()
             adapterPager.addImage(placeOne.photo)
@@ -37,6 +35,9 @@ class PlaceAdapterUser(val context: Context): RecyclerView.Adapter<PlaceAdapterU
             textView6.text = "Количество посещений: ${place.allPos}"
             textName.text = placeOne.name
             textView7.text = "Дата последнего посещения: ${place.lastPos}"
+            liner.setOnClickListener {
+                listener.onClick(place, data)
+            }
         }
     }
 
@@ -46,7 +47,7 @@ class PlaceAdapterUser(val context: Context): RecyclerView.Adapter<PlaceAdapterU
     }
 
     override fun onBindViewHolder(holder: PlaceUserHolder, position: Int) {
-        holder.bind(PlaceList[position], PlaceData[position])
+        holder.bind(PlaceList[position], PlaceData[position], listener)
     }
 
     override fun getItemCount(): Int {
@@ -80,5 +81,9 @@ class PlaceAdapterUser(val context: Context): RecyclerView.Adapter<PlaceAdapterU
     fun deleter(){
         PlaceList.removeAll(PlaceList.toSet())
         PlaceData.removeAll(PlaceData.toSet())
+    }
+
+    interface Listener{
+        fun onClick(placeData: PlaceData, data: DataSnapshot)
     }
 }
