@@ -44,15 +44,26 @@
 
             <SeekBar
                 android:id="@+id/seekBar4"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.35"
+                android:thumbTint="@color/BrownMain"
+                android:autofillHints="@color/BrownMain"
+                android:textColorHint="@color/BrownMain"
+                android:theme="@style/MySwitch"
                 android:max="5"
                 android:progress="0" />
 
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/currentPositionTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:text="Текущая позиция: 0"
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,8 +82,10 @@
 
             <Switch
                 android:id="@+id/switch1"
+                android:theme="@style/MySwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:thumbTint="@color/BrownMain"
                 android:layout_weight="1" />
         </LinearLayout>
 

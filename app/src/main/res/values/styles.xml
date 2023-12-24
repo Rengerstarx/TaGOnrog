@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MySwitch" parent="Theme.AppCompat.Light">
+        <!-- Неактивное состояние -->
+        <item name="colorSwitchThumbNormal">@color/BrownMain</item>
+        <!-- Активное состояние -->
+        <item name="colorControlActivated">@color/BrownMain</item>
+    </style>
+</resources>

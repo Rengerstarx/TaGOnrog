@@ -4,14 +4,14 @@
     <item android:title="Лента"
         android:id="@+id/List"
         android:icon="@drawable/ic_list"
-        android:color="@color/mainGreen"/>
+        android:color="@color/white"/>
     <item android:title="Карта"
         android:id="@+id/Map"
         android:icon="@drawable/ic_map"
-        android:color="@color/mainGreen"/>
+        android:color="@color/white"/>
     <item android:title="Профиль"
         android:id="@+id/Profile"
         android:icon="@drawable/ic_profile"
-        android:color="@color/mainGreen"/>
+        android:color="@color/white"/>
 
 </menu>

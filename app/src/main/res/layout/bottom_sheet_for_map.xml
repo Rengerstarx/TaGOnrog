@@ -87,11 +87,11 @@
 
                         <Button
                             android:id="@+id/btn_route"
-                            android:layout_width="100dp"
+                            android:layout_width="120dp"
                             android:layout_height="50dp"
                             android:backgroundTint="@color/mainBlue"
                             android:text="Маршрут"
-                            android:textSize="10sp"
+                            android:textSize="14sp"
                             app:cornerRadius="40dp" />
 
                         <LinearLayout
@@ -130,7 +130,7 @@
                     <TextView
                         android:id="@+id/info_place"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
                         android:text="TextView"
@@ -140,8 +140,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
                         android:layout_marginTop="5dp"
+                        android:layout_marginRight="10dp"
                         android:background="@color/mainGrey" />
 
 
@@ -151,7 +151,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="5dp"
-                        android:layout_marginRight="10dp"/>
+                        android:layout_marginRight="10dp" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
