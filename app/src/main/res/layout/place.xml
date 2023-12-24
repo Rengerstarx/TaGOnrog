@@ -81,7 +81,7 @@
                         android:layout_height="1dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="5dp"
-                        android:background="@color/mainGreen" />
+                        android:background="@color/mainBlue" />
 
                     <LinearLayout
                         android:id="@+id/layoutTags"

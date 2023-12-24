@@ -6,10 +6,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.taganroggo.Adapters.PlaceAdapterUser
+import com.example.taganroggo.Adapters.RaitAdapter
 import com.example.taganroggo.databinding.FragmentProfileBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
@@ -43,6 +48,41 @@ class Profile : Fragment(), PlaceAdapterUser.Listener {
             user.visits.forEach { it4 ->
                 FirebaseAPI().takeOne("Places", it4.placeID) { it5 ->
                     adapter.createElement(it4, it5)
+                }
+            }
+        }
+        binding.raiting.setOnClickListener {
+            val dialog = BottomSheetDialog(requireContext())
+            val view = layoutInflater.inflate(R.layout.bottom_sheet_rait, null)
+            dialog.setCancelable(true)
+            dialog.setContentView(view)
+            dialog.show()
+            firebase.takeOne("Users", uid) {
+                val user = ParceUsers().parsUser(it)
+                val image = view.findViewById<ImageView>(R.id.imageView8)
+                FirebaseAPI().getPicLogo(user.ava) { it2 ->
+                    Picasso.get().load(it2).into(image)
+                }
+                view.findViewById<TextView>(R.id.textView15).text = user.name
+                view.findViewById<TextView>(R.id.textView15).text = "Мой рейтинг: ${user.score}"
+                val adapter = RaitAdapter()
+                view.findViewById<RecyclerView>(R.id.rc).layoutManager = LinearLayoutManager(requireContext())
+                view.findViewById<RecyclerView>(R.id.rc).adapter = adapter
+                FirebaseAPI().takeAll("Users") {
+                    val users = arrayListOf<Users>()
+                    for (data in it) {
+                        users.add(ParceUsers().parsUser(data))
+                    }
+                    val sortedList = users.sortedByDescending { it.score }
+                    if (sortedList.size >= 5) {
+                        for (i in 0..4) {
+                            adapter.createElement(sortedList[i])
+                        }
+                    } else {
+                        sortedList.forEach { it2 ->
+                            adapter.createElement(it2)
+                        }
+                    }
                 }
             }
         }
