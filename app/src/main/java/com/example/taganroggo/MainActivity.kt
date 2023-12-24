@@ -53,8 +53,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-//https://github.com/akshay2211/BubbleTabBar
+        //https://github.com/akshay2211/BubbleTabBar
         bubble = binding.bubbleTabBar
         replaceFragment(PlaceList())
         bubble.addBubbleListener(object : OnBubbleClickListener {

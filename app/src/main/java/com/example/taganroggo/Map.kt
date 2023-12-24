@@ -84,8 +84,7 @@ import kotlin.math.sqrt
 class Map() : Fragment(), DrivingSession.DrivingRouteListener{
     private lateinit var mapView: MapView
     private var zoomValue: Float = 13.0f
-    private val startPoint = Point(47.202240, 38.935643)
-    private val endPoint = Point(47.210883, 38.922896)
+    private lateinit var userPoint : Point
     private lateinit var pLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var mapKit: MapKit
     private lateinit var dialog : Dialog
@@ -125,6 +124,7 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
                 }
             }
 
+            val btn = dialogView?.findViewById<Button>(R.id.btn_route)
             val image = dialogView?.findViewById<ViewPager2>(R.id.image_list_info)
             val time = dialogView?.findViewById<TextView>(R.id.textTime)
             val addr = dialogView?.findViewById<TextView>(R.id.textAdress)
@@ -149,7 +149,7 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
                 )
                 cardParams.setMargins(5, 5, 5, 5)
                 cardView.layoutParams = cardParams
-                cardView.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.mainGreen)) // Устанавливаем цвет фона
+                cardView.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.mainBlue)) // Устанавливаем цвет фона
                 cardView.radius = 40f // Устанавливаем радиус скругления углов
 
                 val textView = TextView(context)
@@ -173,11 +173,32 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
                     break
                 }
             }
-
+            getUserLocation()
             dialog.show()
             dialog.setOnCancelListener {
                 liveData.flag_view.value = false
             }
+
+            btn!!.setOnClickListener{
+                println("Function click button")
+                val drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
+                val drivingOptions = DrivingOptions().apply {
+                    routesCount = 1
+                }
+                val vehicleOptions = VehicleOptions()
+                var points:ArrayList<RequestPoint> = ArrayList()
+
+                points.add(RequestPoint(userPoint, RequestPointType.WAYPOINT, null, null))
+                points.add(RequestPoint(Point(point.latitude, point.longitude), RequestPointType.WAYPOINT, null, null))
+                drivingSession = drivingRouter.requestRoutes(
+                    points,
+                    drivingOptions,
+                    vehicleOptions,
+                    this@Map
+                )
+                dialog.dismiss()
+            }
+
             return true
         }
 
@@ -368,20 +389,23 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
             }
 
         }
-
+        getUserLocation()
         dialog.show()
         dialog.setOnCancelListener {
             liveData.flag_view.value = false
         }
 
         btn!!.setOnClickListener{
+            println("Function click button")
             val drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
             val drivingOptions = DrivingOptions().apply {
                 routesCount = 1
             }
             val vehicleOptions = VehicleOptions()
             var points:ArrayList<RequestPoint> = ArrayList()
-            points.add(RequestPoint(Point(liveData.point_user.value!!.latitude, liveData.point_user.value!!.longitude), RequestPointType.WAYPOINT, null, null))
+
+            //println(userPoint.latitude)
+            points.add(RequestPoint(userPoint, RequestPointType.WAYPOINT, null, null))
             points.add(RequestPoint(Point(liveData.data.value!!.latitude, liveData.data.value!!.longitude), RequestPointType.WAYPOINT, null, null))
             drivingSession = drivingRouter.requestRoutes(
                 points,
@@ -404,6 +428,28 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
         TODO("Not yet implemented")
     }
 
+    private fun getUserLocation() {
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+        val task = fusedLocationProviderClient.lastLocation
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        } else {
+        }
+        task.addOnSuccessListener {
+            println("gdaojgdakjkvadgddddddddagsgggggggggggggggggggggggggj")
+            if (it != null) {
+                userPoint = Point(it.latitude, it.longitude)
+            }
+        }
+    }
 
     //companion object {
     //  fun newInstance() = Map()

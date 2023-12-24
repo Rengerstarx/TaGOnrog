@@ -48,7 +48,7 @@ class PlaceAdapter(val listener: Listener, val context: Context): RecyclerView.A
                 )
                 cardParams.setMargins(5, 5, 5, 5)
                 cardView.layoutParams = cardParams
-                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.mainGreen)) // Устанавливаем цвет фона
+                cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.mainBlue)) // Устанавливаем цвет фона
                 cardView.radius = 40f // Устанавливаем радиус скругления углов
 
                 val textView = TextView(context)

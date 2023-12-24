@@ -85,6 +85,15 @@
                             android:layout_marginTop="5dp"
                             android:background="@color/mainBlue" />
 
+                        <Button
+                            android:id="@+id/btn_route"
+                            android:layout_width="100dp"
+                            android:layout_height="50dp"
+                            android:backgroundTint="@color/mainBlue"
+                            android:text="Маршрут"
+                            android:textSize="10sp"
+                            app:cornerRadius="40dp" />
+
                         <LinearLayout
                             android:id="@+id/layoutTags"
                             android:layout_width="match_parent"
@@ -143,15 +152,6 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginRight="10dp"/>
-
-                    <Button
-                        android:id="@+id/btn_route"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="80dp"
-                        android:layout_marginRight="290dp"
-                        android:text="Button" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
