@@ -19,17 +19,16 @@ import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import com.yandex.mapkit.map.Map
 import android.location.LocationManager
+import android.media.MediaPlayer
+import android.media.SoundPool
 import android.os.Build
+import android.os.CountDownTimer
 import androidx.appcompat.app.AppCompatActivity
 import android.telephony.CarrierConfigManager.Gps
 import android.util.Log
 import android.view.Gravity
 import android.view.Window
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -43,6 +42,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.airbnb.lottie.LottieDrawable
 import com.example.taganroggo.Adapters.ComentAdapter
 import com.example.taganroggo.Adapters.PlaceAdapter
 import com.example.taganroggo.Adapters.PlacePhotoAdapter
@@ -69,6 +69,7 @@ import com.yandex.mapkit.map.MapObject
 import com.yandex.mapkit.map.MapObjectCollection
 import com.yandex.mapkit.map.MapObjectTapListener
 import com.yandex.mapkit.map.PlacemarkMapObject
+import com.yandex.mapkit.map.PolylineMapObject
 import com.yandex.mapkit.map.TextStyle
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationLayer
@@ -93,6 +94,8 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
     private var placemarkList: ArrayList<PlacemarkMapObject> = arrayListOf()
     var dialogView: View? = null
     var curentLocation: Location? = null
+    private lateinit var polyline : PolylineMapObject
+    private var count_routing = 0
     lateinit var places : MutableList<Place>
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var drivingSession:DrivingSession? = null
@@ -138,6 +141,21 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
             time!!.text = obj.time
             addr!!.text = obj.adress
             name!!.text = obj.name
+            info!!.text = obj.info
+
+            val adapter = ComentAdapter()
+            dialogView?.findViewById<RecyclerView>(R.id.rcView)?.layoutManager = LinearLayoutManager(requireContext())
+            dialogView?.findViewById<RecyclerView>(R.id.rcView)?.adapter = adapter
+
+            FirebaseAPI().takeOne("Places", obj.id) {
+                it.child("Visitors").children.forEach { it2 ->
+                    val key = it2.key.toString().toInt()
+                    FirebaseAPI().takeOne("Users", key) { it3 ->
+                        val user = ParceUsers().parsUser(it3)
+                        adapter.createElement(user, it2.child("Com").value.toString())
+                    }
+                }
+            }
 
             var allTags = 0
             layoutTags!!.removeAllViews()
@@ -234,7 +252,7 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
 
         mapView = activity?.findViewById(R.id.mapview)!!
 
-        val center_button = activity?.findViewById(R.id.center_pos) as Button
+        val center_button = activity?.findViewById(R.id.center_pos) as ImageButton
 
         center_button.setOnClickListener {
             go_to_user_position()
@@ -395,6 +413,30 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
             liveData.flag_view.value = false
         }
 
+        if (liveData.flag_anim.value == true) {
+            liveData.flag_anim.value = false
+            val anim =
+                dialogView?.findViewById<com.airbnb.lottie.LottieAnimationView>(R.id.lottiView)
+            anim?.visibility = View.VISIBLE
+            anim?.setMinProgress(0.0f)
+            anim?.setMaxProgress(1.0f)
+            anim?.repeatCount = 1
+            anim?.repeatMode = LottieDrawable.RESTART
+            anim?.playAnimation()
+            val mediaPlayer = MediaPlayer.create(requireContext(), R.raw.sound)
+            mediaPlayer.start()
+            val timer = object : CountDownTimer(5000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+
+                }
+
+                override fun onFinish() {
+                    anim?.visibility = View.GONE
+                }
+            }
+            timer.start()
+        }
+
         btn!!.setOnClickListener{
             println("Function click button")
             val drivingRouter = DirectionsFactory.getInstance().createDrivingRouter()
@@ -419,8 +461,14 @@ class Map() : Fragment(), DrivingSession.DrivingRouteListener{
     }
 
     override fun onDrivingRoutes(p0: MutableList<DrivingRoute>) {
+        if (count_routing > 0){
+            mapView.map.mapObjects.remove(polyline)
+            count_routing = 0
+        }
         for(route in p0){
-            mapView.map.mapObjects.addPolyline(route.geometry)
+            Log.i("Dibug1", "route")
+            count_routing++
+            polyline = mapView.map.mapObjects.addPolyline(route.geometry)
         }
     }
 

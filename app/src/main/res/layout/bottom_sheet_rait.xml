@@ -53,23 +53,23 @@
 
                 <TextView
                     android:id="@+id/textView15"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="15dp"
+                    android:text=""
                     android:textColor="@color/white"
-                    android:textStyle="bold"
                     android:textSize="22sp"
-                    android:text="" />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/textView16"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
+                    android:text=""
                     android:textColor="@color/white"
-                    android:textStyle="normal"
                     android:textSize="16sp"
-                    android:text="" />
+                    android:textStyle="normal" />
             </LinearLayout>
         </LinearLayout>
 

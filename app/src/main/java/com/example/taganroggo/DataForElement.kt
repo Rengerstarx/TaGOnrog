@@ -14,4 +14,7 @@ open class DataForElement : ViewModel() {
     val point_user : MutableLiveData<Point> by lazy {
         MutableLiveData<Point>()
     }
+    val flag_anim : MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
+    }
 }
