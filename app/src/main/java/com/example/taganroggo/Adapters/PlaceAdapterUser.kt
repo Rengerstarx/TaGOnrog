@@ -2,23 +2,15 @@ package com.example.taganroggo.Adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
-import android.provider.ContactsContract.Data
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
-import androidx.core.view.marginTop
-import androidx.core.view.setMargins
 import androidx.recyclerview.widget.RecyclerView
 import com.example.taganroggo.*
+import com.example.taganroggo.Data.PlaceData
+import com.example.taganroggo.Parsers.ParserPLace
 import com.example.taganroggo.databinding.Place2Binding
-import com.example.taganroggo.databinding.PlaceBinding
 import com.google.firebase.database.DataSnapshot
-import com.squareup.picasso.Picasso
 
 
 class PlaceAdapterUser(val context: Context, val listener: Listener): RecyclerView.Adapter<PlaceAdapterUser.PlaceUserHolder>() {

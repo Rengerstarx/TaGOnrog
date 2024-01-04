@@ -1,30 +1,14 @@
 package com.example.taganroggo.Adapters
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.graphics.Color
-import android.graphics.Typeface
-import android.graphics.fonts.FontFamily
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.annotation.RequiresApi
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
-import androidx.core.view.marginTop
-import androidx.core.view.setMargins
 import androidx.recyclerview.widget.RecyclerView
 import com.example.taganroggo.FirebaseAPI
-import com.example.taganroggo.Place
 import com.example.taganroggo.R
-import com.example.taganroggo.Users
-import com.example.taganroggo.databinding.ComentBinding
-import com.example.taganroggo.databinding.PlaceBinding
+import com.example.taganroggo.Data.Users
 import com.example.taganroggo.databinding.RatingBinding
-import com.google.android.material.internal.ContextUtils.getActivity
 import com.squareup.picasso.Picasso
 
 

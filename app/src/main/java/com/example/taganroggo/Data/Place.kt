@@ -1,4 +1,4 @@
-package com.example.taganroggo
+package com.example.taganroggo.Data
 
 data class Place(val adress: String,
                  val name: String,

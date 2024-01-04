@@ -1,15 +1,15 @@
-package com.example.taganroggo
+package com.example.taganroggo.Parsers
 
-import android.provider.ContactsContract.Data
+import com.example.taganroggo.Data.Place
 import com.google.firebase.database.DataSnapshot
 
 
 class ParserPLace {
 
     fun parsPalce(dataSnapshot: DataSnapshot): Place {
-        var photos = mutableListOf<String>()
-        var tags = mutableListOf<String>()
-        var visitors = mutableListOf<String>()
+        val photos = mutableListOf<String>()
+        val tags = mutableListOf<String>()
+        val visitors = mutableListOf<String>()
         for (partnerSnapshot in dataSnapshot.child("Photo").children) {
             photos.add(partnerSnapshot.value.toString())
         }
@@ -35,11 +35,11 @@ class ParserPLace {
     }
 
     fun parsPalces(dataSnapshot: MutableList<DataSnapshot>): MutableList<Place> {
-        var places = mutableListOf<Place>()
+        val places = mutableListOf<Place>()
         dataSnapshot.forEach { it ->
-            var photos = mutableListOf<String>()
-            var tags = mutableListOf<String>()
-            var visitors = mutableListOf<String>()
+            val photos = mutableListOf<String>()
+            val tags = mutableListOf<String>()
+            val visitors = mutableListOf<String>()
             for (partnerSnapshot in it.child("Photo").children) {
                 photos.add(partnerSnapshot.value.toString())
             }

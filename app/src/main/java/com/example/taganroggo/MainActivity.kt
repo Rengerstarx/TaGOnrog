@@ -13,17 +13,15 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import android.view.KeyEvent
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.taganroggo.Adapters.PlaceAdapter
+import com.example.taganroggo.Data.DataForElement
+import com.example.taganroggo.Data.Place
+import com.example.taganroggo.Parsers.ParserPLace
 import com.example.taganroggo.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -56,7 +54,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        //https://github.com/akshay2211/BubbleTabBar
         bubble = binding.bubbleTabBar
         liveData.flag_anim.value = false
         replaceFragment(PlaceList())
@@ -199,7 +196,7 @@ class MainActivity : AppCompatActivity() {
                         liveData.flag_anim.value = true
                         val sharedPreferences = getSharedPreferences("SPDB", Context.MODE_PRIVATE)
                         val uid = sharedPreferences.getInt("id", 1)
-                        FirebaseAPI().addVisitByName(liveData.data.value!!.name, uid, liveData.data.value!!.id)
+                        FirebaseAPI().addVisitByUid(uid, liveData.data.value!!.id)
                         liveData.flag_view.value = true
                         if (is_frag != 2) {
                             replaceFragment(Map())
@@ -216,7 +213,7 @@ class MainActivity : AppCompatActivity() {
         val deltaX = x2 - x1
         val deltaY = y2 - y1
 
-// Используем теорему Пифагора для вычисления расстояния
+        // Используем теорему Пифагора для вычисления расстояния
         val distance = sqrt(deltaX.pow(2) + deltaY.pow(2))
         return distance
     }

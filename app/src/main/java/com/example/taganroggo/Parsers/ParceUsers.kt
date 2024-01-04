@@ -1,16 +1,14 @@
-package com.example.taganroggo
+package com.example.taganroggo.Parsers
 
+import com.example.taganroggo.Data.PlaceData
+import com.example.taganroggo.Data.Users
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.FirebaseDatabase
 
 class ParceUsers {
 
     fun parsUser(dataSnapshot: DataSnapshot): Users {
         var visit = mutableListOf<PlaceData>()
-        println("------------------------------------------------------")
-        println(dataSnapshot.child("Place").children.count())
         dataSnapshot.child("Place").children.forEach {
-            println(dataSnapshot)
             visit.add(PlaceData(it.key.toString().toInt(), it.child("Count").value.toString().toInt(), it.child("Data").value.toString(), it.child("Coment").value.toString().toBoolean()))
         }
         val user = Users(

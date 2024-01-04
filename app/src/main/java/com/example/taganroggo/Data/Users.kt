@@ -1,4 +1,4 @@
-package com.example.taganroggo
+package com.example.taganroggo.Data
 
 data class Users(val mail: String,
                 val name: String,

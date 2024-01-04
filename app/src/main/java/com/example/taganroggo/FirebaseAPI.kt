@@ -1,6 +1,7 @@
 package com.example.taganroggo
 
 import android.util.Log
+import com.example.taganroggo.Parsers.ParceUsers
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -64,6 +65,13 @@ class FirebaseAPI {
             })
     }
 
+    /**
+     * Метод регистрирующий пользователя и возвращающий его айдишник
+     * @param name - имя пользователя
+     * @param mail - почта пользователя
+     * @param surname - фамилия пользователя
+     * @return uid - айди пользователя
+     * */
     fun writeUserFB(name: String, mail: String, surname: String, completion: (Int) -> Unit) {
         FirebaseDatabase.getInstance().getReference("Users")
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -100,38 +108,12 @@ class FirebaseAPI {
         }
     }
 
-    fun writeUser(name: String, mail: String, surname: String, completion: (Int) -> Unit) {
-        val listOfPartners = mutableListOf<DataSnapshot>()
-        FirebaseDatabase.getInstance().getReference("Users")
-            .addListenerForSingleValueEvent(object :
-                ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val count = dataSnapshot.children.count()
-                    FirebaseDatabase.getInstance().getReference("Users").child(count.toString())
-                        .child("Mail").setValue(mail)
-                    FirebaseDatabase.getInstance().getReference("Users").child(count.toString())
-                        .child("Name").setValue(name)
-                    FirebaseDatabase.getInstance().getReference("Users").child(count.toString())
-                        .child("Score").setValue(0)
-                    FirebaseDatabase.getInstance().getReference("Users").child(count.toString())
-                        .child("Surname").setValue(surname)
-                    val filenameA = "ava" + (1..5).random() + ".jpg"
-                    val filenameF = "fon" + (1..5).random() + ".jpg"
-                    FirebaseDatabase.getInstance().getReference("Users").child(count.toString())
-                        .child("Photo").child("Avatarka").setValue(filenameA)
-                    FirebaseDatabase.getInstance().getReference("Users").child(count.toString())
-                        .child("Mail").child("Fon").setValue(filenameF)
-                    completion(count)
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    //Обработка ошибки
-                    println("Failed to read value: ${databaseError.toException()}")
-                }
-            })
-    }
-
-    fun addVisitByName(name: String, uid: Int, uidP: Int) {
+    /**
+     * Метод регистрирующий посещение ползователя
+     * @param uid - айди пользователя
+     * @param uidP - айди места
+     * */
+    fun addVisitByUid(uid: Int, uidP: Int) {
         takeOne("Users", uid) { it5 ->
             val user = ParceUsers().parsUser(it5)
             val time = Calendar.getInstance().time
@@ -158,5 +140,11 @@ class FirebaseAPI {
                     .child("Count").setValue(1)
             }
         }
+    }
+
+    fun addComent(placeID: Int, uid: Int, coment: String, rait: Int) {
+        FirebaseDatabase.getInstance().getReference("Places").child(placeID.toString()).child("Visitors").child(uid.toString()).child("Com").setValue(coment)
+        FirebaseDatabase.getInstance().getReference("Places").child(placeID.toString()).child("Visitors").child(uid.toString()).child("Rait").setValue(rait)
+        FirebaseDatabase.getInstance().getReference("Users").child(uid.toString()).child("Place").child(placeID.toString()).child("Coment").setValue(true)
     }
 }
