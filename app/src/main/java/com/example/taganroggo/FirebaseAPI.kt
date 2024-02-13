@@ -1,6 +1,7 @@
 package com.example.taganroggo
 
 import android.util.Log
+import com.example.taganroggo.Parsers.ParceDate
 import com.example.taganroggo.Parsers.ParceUsers
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -66,6 +67,27 @@ class FirebaseAPI {
     }
 
     /**
+     * Метод возвращающий дату последнего посещения по переданному id пользователя и места
+     * @param uid - id пользователя
+     * @param place - id места
+     * @return dataSnapshot - нужный dataSnapshot
+     * */
+    fun takeLastVisitByUid(uid : Int, place : Int, completion: (DataSnapshot) -> Unit) {
+        FirebaseDatabase.getInstance().getReference("Users").child(uid.toString()).child("Place").child(place.toString()).child("Data")
+            .addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    completion(dataSnapshot)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Обработка ошибки
+                    Log.e("FirebaseError", "Failed to read the value", databaseError.toException())
+                }
+            })
+    }
+
+    /**
      * Метод регистрирующий пользователя и возвращающий его айдишник
      * @param name - имя пользователя
      * @param mail - почта пользователя
@@ -116,8 +138,7 @@ class FirebaseAPI {
     fun addVisitByUid(uid: Int, uidP: Int) {
         takeOne("Users", uid) { it5 ->
             val user = ParceUsers().parsUser(it5)
-            val time = Calendar.getInstance().time
-            val currentTime = "${time.hours}:${time.minutes} ${time.date}.${time.month + 1}.${time.year - 100}"
+            val currentTime = ParceDate().getDate()
             val scr = user.score + 5
             FirebaseDatabase.getInstance().getReference("Users").child(uid.toString())
                 .child("Score").setValue(scr)

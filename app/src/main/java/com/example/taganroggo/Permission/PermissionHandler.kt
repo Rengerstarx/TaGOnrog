@@ -36,4 +36,6 @@ class PermissionHandler(private val context: Context, private val activity: Acti
             }
         }
     }
+
+
 }
